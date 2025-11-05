@@ -1,6 +1,7 @@
-# Ignore everything in dataset/
+# Ignore everything in dataset/ and models/
 dataset/*
+models/*
 
-# But keep the README.md file
+# But keep the README.md files
 !dataset/README.md
-
+!models/README.md
