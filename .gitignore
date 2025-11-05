@@ -1,0 +1,6 @@
+# Ignore everything in dataset/
+dataset/*
+
+# But keep the README.md file
+!dataset/README.md
+
