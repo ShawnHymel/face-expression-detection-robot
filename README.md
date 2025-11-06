@@ -4,7 +4,23 @@ This project demonstrates training a face expression/emotion detection model (ba
 
 ## Training
 
-Note that I've tested this on an MSI laptop with an NVIDIA GeForce RTX 3070 GPU running on Linux Mint 21.3. The training script has a switch that you can set to enable training on the GPU vs the CPU (if you do not have access to a GPU).
+### Installation
 
-### Install Software
+We will use a Docker image to train our object detection model, as it gives us the option to run it on most major operating systems. Note that there are two versions of the Dockerfile:
 
+ * **Dockerfile.gpu** - Use this if you have access to an NVIDIA GPU that you want to use to speed up training
+ * **Dockerfile.cpu** - Use this if you want to use just your CPU instead (slower training but will work across a variety of systems)
+
+> **Note**: I will demonstrate everything using the GPU version. Switch to the CPU version if you do not have a GPU.
+
+Build the Docker image:
+
+```sh
+docker build -f Dockerfile.gpu -t fed-training-gpu .
+```
+
+Run it (Linux, macOS, or PowerShell in Windows):
+
+```sh
+docker run --rm -it -v "$(pwd)/workspace:/workspace" fed-training-gpu
+```
