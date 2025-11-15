@@ -1,10 +1,16 @@
-# Ignore everything in dataset/ and models/
+# Ignore everything in dataset/ and runs/
 workspace/dataset/*
-workspace/models/*
+workspace/runs/*
 
 # But keep the README.md files
 !workspace/dataset/README.md
 !workspace/models/README.md
+
+# Ignore the downloaded, pre-trained model
+workspace/models/yolo_pretrained.pt
+
+# Ignore the auto-downloaded yolo11 model (https://github.com/ultralytics/ultralytics/issues/18220)
+yolo11n.pt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

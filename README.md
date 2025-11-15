@@ -22,10 +22,12 @@ docker build -f Dockerfile.gpu -t fed-training-gpu .
 Run it (Linux, macOS, or PowerShell in Windows):
 
 ```sh
-docker run --rm -it --gpus all -p 8888:8888 -v "${PWD}/workspace:/workspace" fed-training-gpu
+docker run --rm -it --gpus all --shm-size=2g -p 8888:8888 -p 6006:6006 -v "${PWD}/workspace:/workspace" fed-training-gpu
 ```
 
-> **Note**: If you want to override the Jupyter Lab server and get an interactive terminal instead, simply add `/bin/bash` to the end of the above command. In the interactive terminal (for the GPU version only), you can run `nvidia-smi` to test the availability of CUDA (you should see CUDA version at `13.0` based on the installed application versions).
+> **Note**: If you want to override the Jupyter Lab server and get an interactive terminal instead, simply add `--entrypoint /bin/bash` to the above command (before `fed-training-gpu`). In the interactive terminal (for the GPU version only), you can run `nvidia-smi` to test the availability of CUDA (you should see CUDA version at `13.0` based on the installed application versions).
 
 With the Jupyter Lab server running, you can click on the URL shown in the terminal (likely the one starting with `http://127.0.0.1:8888/lab?token=...`) to open a browser for Jupyter Lab.
+
+To connect to TensorBoard, navigate to [127.0.0.1:6006](127.0.0.1:6006).
 
