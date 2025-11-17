@@ -1,5 +1,6 @@
 # Ignore everything in dataset/ and runs/
 workspace/dataset/*
+workspace/notebooks/runs/
 workspace/runs/*
 
 # But keep the README.md files
