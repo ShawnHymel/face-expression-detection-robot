@@ -6,6 +6,7 @@ workspace/runs/*
 # But keep the README.md files
 !workspace/dataset/README.md
 !workspace/models/README.md
+!workspace/runs/README.md
 
 # Ignore the downloaded, pre-trained model
 workspace/models/yolo_pretrained.pt
