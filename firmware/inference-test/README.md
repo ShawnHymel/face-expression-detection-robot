@@ -1,1 +1,0 @@
-Static inference test with ONNX model.
