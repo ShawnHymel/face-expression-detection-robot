@@ -1,10 +1,11 @@
-name: Face Inference Test
-description: "Perform inference on a static image"
-icon: ⚛
-version: "1.0.0"
+name: Detect Objects on Camera
+icon: 📽️
+description: This example showcases object detection within a live feed from a USB camera.
 
-# Define any exposed ports
-ports: []
-
-# Define bricks if using pre-built components
-bricks: []
+bricks:
+  - arduino:video_object_detection: {
+    variables: {
+      EI_OBJ_DETECTION_MODEL: /home/arduino/.arduino-bricks/ei-models/model.eim
+    }
+  }
+  - arduino:web_ui

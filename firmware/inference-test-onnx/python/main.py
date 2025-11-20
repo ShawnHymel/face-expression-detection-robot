@@ -7,9 +7,9 @@ import onnxruntime as ort
 
 # Settings
 IMG_PATH = "test.jpg"
-MODEL_PATH = "model.onnx"
-TARGET_W = 640
-TARGET_H = 640
+MODEL_PATH = "model_with_nms.onnx"
+TARGET_W = 416
+TARGET_H = 416
 CONFIDENCE_THRESHOLD = 0.01
 OUTPUT_PATH = "out.jpg"
 
