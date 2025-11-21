@@ -1,11 +1,6 @@
-name: Detect Objects on Camera
+name: Webcam test
 icon: 📽️
-description: This example showcases object detection within a live feed from a USB camera.
+description: Shows how to feed webcam images to a simple web page
 
 bricks:
-  - arduino:video_object_detection: {
-    variables: {
-      EI_OBJ_DETECTION_MODEL: /home/arduino/.arduino-bricks/ei-models/model.eim
-    }
-  }
   - arduino:web_ui

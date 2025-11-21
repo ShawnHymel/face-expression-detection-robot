@@ -1,0 +1,89 @@
+/*
+SPDX-FileCopyrightText: Copyright (C) ARDUINO SRL (http://www.arduino.cc)
+
+SPDX-License-Identifier: MPL-2.0
+*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #008184;
+    font-size: 2rem;
+}
+
+.video-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 480px;
+}
+
+#webcamImage {
+    max-width: 100%;
+    max-height: 80vh;
+    display: block;
+}
+
+.status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 40px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    z-index: 10;
+}
+
+.status.connected {
+    background-color: rgba(40, 167, 69, 0.9);
+    color: white;
+}
+
+.status.disconnected {
+    background-color: rgba(220, 53, 69, 0.9);
+    color: white;
+}
+
+.status.error {
+    background-color: rgba(255, 193, 7, 0.9);
+    color: #333;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+}

@@ -1,0 +1,11 @@
+name: Webcam Capture Test
+icon: 📹
+description: Simple webcam capture and streaming demo
+
+# Which built-in Arduino UNO Q "bricks" (container-based libraries) to use
+bricks:
+  - arduino:web_ui
+  
+# This tells the Arduino CLI to mount camera devices into the Python container
+requires_devices:
+  - camera

@@ -67,8 +67,7 @@ mkdir -p ~/ArduinoApps/face-detection-robot
 From your host computer, open up a new terminal, navigate into this directory, and run the following (replace <UNO_Q_IP_ADDRESS> with the IP address of your UNO Q board):
 
 ```sh
-cd firmware/face-detection-robot/
-scp -r * arduino@<UNO_Q_IP_ADDRESS>:~/ArduinoApps/face-detection-robot/
+scp -r firmware/face-detection-robot/ arduino@<UNO_Q_IP_ADDRESS>:~/ArduinoApps
 ```
 
 Now, we can use the Arduino App CLI to run and control apps. To start your program, run the following in the SSH terminal (connected to your UNO Q):
