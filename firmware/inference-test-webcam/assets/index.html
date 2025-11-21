@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Stream</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Webcam Stream</h1>
+        </div>
+        
+        <div class="video-container">
+            <img id="webcamImage" alt="Webcam feed">
+            <div id="status" class="status">Connecting...</div>
+        </div>
+    </div>
+
+    <script src="libs/socket.io.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
