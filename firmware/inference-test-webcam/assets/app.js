@@ -73,17 +73,32 @@ function initSocketIO() {
 }
 
 /**
- * Calculate and log the actual frame rate
+ * Update stats overlay with latest data
  */
-function updateFrameRate() {
+function updateStats(data) {
     frameCount++;
     
-    // Calculate FPS every 30 frames
+    // Update FPS
+    if (data.fps !== undefined) {
+        fpsElement.textContent = data.fps.toFixed(1);
+    }
+    
+    // Update inference time
+    if (data.inference_time_ms !== undefined) {
+        inferenceElement.textContent = `${data.inference_time_ms.toFixed(1)}ms`;
+    }
+    
+    // Update detections count
+    if (data.detections !== undefined) {
+        detectionsElement.textContent = data.detections;
+    }
+    
+    // Calculate client-side FPS every 30 frames for comparison
     if (frameCount % 30 === 0) {
         const now = Date.now();
-        const elapsed = (now - lastFrameTime) / 1000; // Convert to seconds
-        const fps = 30 / elapsed;
-        console.log(`Receiving ~${fps.toFixed(1)} fps`);
+        const elapsed = (now - lastFrameTime) / 1000;
+        const clientFps = 30 / elapsed;
+        console.log(`Client receiving ~${clientFps.toFixed(1)} fps (server reports ${data.fps?.toFixed(1)} fps)`);
         lastFrameTime = now;
     }
 }
