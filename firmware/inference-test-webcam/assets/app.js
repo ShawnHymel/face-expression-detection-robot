@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (C) ARDUINO SRL (http://www.arduino.cc)
-//
-// SPDX-License-Identifier: MPL-2.0
-
 let socket;
 let imageElement;
 let statusElement;
+let fpsElement;
+let inferenceElement;
+let detectionsElement;
+let statsOverlay;
 let frameCount = 0;
 let lastFrameTime = Date.now();
 
@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get references to DOM elements
     imageElement = document.getElementById('webcamImage');
     statusElement = document.getElementById('status');
+    fpsElement = document.getElementById('fpsValue');
+    inferenceElement = document.getElementById('inferenceValue');
+    detectionsElement = document.getElementById('detectionsValue');
+    statsOverlay = document.getElementById('statsOverlay');
     
     // Initialize Socket.IO connection
     initSocketIO();
@@ -36,15 +40,18 @@ function initSocketIO() {
     
     // Receive webcam frames
     socket.on('webcam_frame', (data) => {
+        frameCount++;
+        
         // Update the image with the new frame
         imageElement.src = `data:image/jpeg;base64,${data.image}`;
         
-        // Update frame rate display
-        updateFrameRate();
+        // Update stats
+        updateStats(data);
         
-        // Hide status once we start receiving frames
+        // Hide status and show stats overlay once we start receiving frames
         if (frameCount === 1) {
             statusElement.style.display = 'none';
+            statsOverlay.style.display = 'block';
         }
     });
     
@@ -54,6 +61,7 @@ function initSocketIO() {
         statusElement.textContent = 'Connection lost';
         statusElement.className = 'status disconnected';
         statusElement.style.display = 'block';
+        statsOverlay.style.display = 'none';
     });
     
     // Connection error
@@ -69,6 +77,7 @@ function initSocketIO() {
         statusElement.textContent = data.error;
         statusElement.className = 'status error';
         statusElement.style.display = 'block';
+        statsOverlay.style.display = 'none';
     });
 }
 
@@ -76,8 +85,6 @@ function initSocketIO() {
  * Update stats overlay with latest data
  */
 function updateStats(data) {
-    frameCount++;
-    
     // Update FPS
     if (data.fps !== undefined) {
         fpsElement.textContent = data.fps.toFixed(1);
