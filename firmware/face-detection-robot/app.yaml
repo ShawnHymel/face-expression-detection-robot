@@ -1,0 +1,11 @@
+name: Inference Test with Webcam
+icon: 📹
+description: Webcam test, perform inference, stream results
+
+# Which built-in Arduino UNO Q "bricks" (container-based libraries) to use
+bricks:
+  - arduino:web_ui
+  
+# This tells the Arduino CLI to mount camera devices into the Python container
+requires_devices:
+  - camera

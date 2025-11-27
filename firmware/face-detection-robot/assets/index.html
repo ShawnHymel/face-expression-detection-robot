@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Stream</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Webcam Stream</h1>
+        </div>
+        
+        <div class="video-container">
+            <img id="webcamImage" alt="Webcam feed">
+            <div id="status" class="status">Connecting...</div>
+            
+            <!-- Stats overlay -->
+            <div id="statsOverlay" class="stats-overlay">
+                <div class="stat-item">
+                    <span class="stat-label">FPS:</span>
+                    <span id="fpsValue" class="stat-value">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Inference:</span>
+                    <span id="inferenceValue" class="stat-value">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Detections:</span>
+                    <span id="detectionsValue" class="stat-value">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="libs/socket.io.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
