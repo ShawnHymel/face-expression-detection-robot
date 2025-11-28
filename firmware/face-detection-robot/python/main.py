@@ -1,13 +1,16 @@
+import base64
+from dataclasses import dataclass
+import gc
+import threading
+import time
+from typing import List
+
 from arduino.app_utils import *
 from arduino.app_bricks.web_ui import WebUI
 import cv2
 import numpy as np
 import onnxruntime as ort
-import base64
-import threading
-import time
-from dataclasses import dataclass
-from typing import List, Callable, Optional
+
 
 # Settings
 MODEL_PATH = "model_with_nms.onnx"
@@ -15,7 +18,8 @@ CAMERA_INDEX = 0
 TARGET_W = 416
 TARGET_H = 416
 CONFIDENCE_THRESHOLD = 0.8
-WEB_UI_ENABLED = False
+WEB_UI_ENABLED = True
+ANIMATE_HEAD = True
 
 # Class names
 CLASS_NAMES = [
@@ -208,6 +212,11 @@ class WebcamInference:
         # Statistics
         self.frame_count = 0
         self.fps = 0
+
+        # Disable memory arena and pattern optimization
+        sess_options = ort.SessionOptions()
+        sess_options.enable_cpu_mem_arena = False
+        sess_options.enable_mem_pattern = False
         
         # Use CUDA ONNX Runtime if available, fall back to CPU
         print(f"ONNX Runtime version: {ort.__version__}")
@@ -219,8 +228,12 @@ class WebcamInference:
         else:
             print("Using CPU only")
 
-        # Load model into ONNX Runtime
-        self.session = ort.InferenceSession(model_path, providers=providers)
+        # Load model with memory-optimized options
+        self.session = ort.InferenceSession(
+            model_path, 
+            sess_options=sess_options,
+            providers=providers
+        )
         
         # Get model input and output info
         self.input_name = self.session.get_inputs()[0].name
@@ -240,6 +253,9 @@ class WebcamInference:
         if not self.capture.isOpened():
             print(f"Error: Could not open webcam at index {self.camera_index}")
             return False
+        
+        # Reduce buffer size (to only 1 frame) to prevent memory buildup
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
             
         # Get actual 
         actual_width = int(self.capture.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -273,12 +289,14 @@ class WebcamInference:
         Main inference loop: capture image, preprocess, inference, actions
         """
         print("Inference started")
-        
-        # Run thread
+
+        # Initialize metrics
         fps_frame_count = 0
         last_fps_calc_time = time.time()
+        gc_counter = 0
+        
+        # Run thread
         while self.running:
-            loop_start = time.time()
             self.result = None
 
             # Calculate FPS every second
@@ -290,13 +308,16 @@ class WebcamInference:
                 fps_frame_count = 0
                 last_fps_calc_time = fps_timestamp
             
-            # Capture frame
-            ret, frame = self.capture.read()
+            # Capture frame (discard buffers, only get last frame)
+            self.capture.grab()
+            ret, frame = self.capture.retrieve()
             if not ret:
                 print(f"Error: Failed to capture image from webcam")
                 time.sleep(0.5)
                 continue
-            
+
+            # Get a copy of the last frame
+            frame = frame.copy()
             self.frame_count += 1
             
             # Letterbox and scale image
@@ -348,10 +369,27 @@ class WebcamInference:
                 frame_number=self.frame_count
             )
 
-            # Actions: animate the robot head and optionally update web UI 
-            self._animate_head()
+            # Actions: animate the robot head and optionally update web UI
+            if ANIMATE_HEAD:
+                self._animate_head()
             if WEB_UI_ENABLED:
                 self._update_web_ui()
+
+            # Explicitly clean up large objects (free up memory faster)
+            del frame_preprocessed
+            del img_np
+            del img_np_batched
+            del outputs
+            del detections
+
+            # Force garbage collection every 30 frames (keep memory usage low)
+            gc_counter += 1
+            if gc_counter >= 30:
+                gc.collect()
+                gc_counter = 0
+
+            # Allow other system processes to run briefly
+            time.sleep(0.01)
 
     def _animate_head(self):
         """Move servos and update LED ring to respond to face emotion"""
@@ -365,10 +403,6 @@ class WebcamInference:
         x_center_norm = ((box[0] + box[2]) / 2) / self.result.frame.shape[1]
         y_center_norm = ((box[1] + box[3]) / 2) / self.result.frame.shape[0]
         
-        # Don't move if in dead zone
-        if abs(x_center_norm - 0.5) < 0.05 and abs(y_center_norm - 0.5) < 0.05:
-            return
-        
         # Send info to MCU
         Bridge.call(
             "animate_head", 
@@ -376,7 +410,7 @@ class WebcamInference:
             y_center_norm, 
             self.result.classes[largest_idx],
             self.result.scores[largest_idx],
-        );
+        )
 
 
     def _update_web_ui(self):

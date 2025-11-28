@@ -7,6 +7,7 @@ let detectionsElement;
 let statsOverlay;
 let frameCount = 0;
 let lastFrameTime = Date.now();
+let processingFrame = false;
 
 /**
  * Initialize the Socket.IO connection and DOM elements
@@ -40,9 +41,20 @@ function initSocketIO() {
     
     // Receive webcam frames
     socket.on('webcam_frame', (data) => {
+        // If still processing previous frame(s), drop this one
+        if (processingFrame) {
+            console.log('Dropping frame, browser behind');
+            return;
+        }
+
+        // Keep track of frame processing
+        processingFrame = true;
         frameCount++;
         
         // Update the image with the new frame
+        imageElement.onload = () => {
+            processingFrame = false;
+        }
         imageElement.src = `data:image/jpeg;base64,${data.image}`;
         
         // Update stats
